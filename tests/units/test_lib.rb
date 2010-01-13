@@ -123,6 +123,22 @@ class TestLib < Test::Unit::TestCase
     assert(branches.select { |b| /master/.match(b[0]) }.size > 0)  # has a master branch
   end
 
+  def test_ignored_files
+    in_temp_dir do |path|
+      g = Git.clone(@wdir_dot, 'ignored_files_test')
+      l = g.lib
+      Dir.chdir('ignored_files_test') do
+        assert(l.ignored_files.length == 0)
+        new_file('.gitignore', 'ignored_file')
+        new_file('ignored_file', 'this file should be ignored')
+        assert(l.ignored_files.length == 1)
+        append_file('.gitignore', '*~')
+        new_file('ignored_file~', 'this file should also be ignored')
+        assert(l.ignored_files.length == 2)
+      end
+    end
+  end
+  
   def test_config_remote
     config = @lib.config_remote('working')
     assert_equal('../working.git', config['url'])
