@@ -85,7 +85,7 @@ module Git
         
         # find untracked in working dir
         Dir.chdir(@base.dir.path) do
-          Dir.glob('**/*') do |file|
+          all_files_except_dot_git.each do |file|
             @files[file] = {:path => file, :untracked => true} unless @files[file] || File.directory?(file) || ignore.include?(file)
           end
         end
@@ -103,6 +103,10 @@ module Git
         @files.each do |k, file_hash|
           @files[k] = StatusFile.new(@base, file_hash)
         end
+      end
+      
+      def all_files_except_dot_git
+        Dir.glob("**/*", File::FNM_DOTMATCH) - Dir.glob(".git/**/*", File::FNM_DOTMATCH) - [".", "..", ".git"]
       end
       
   end

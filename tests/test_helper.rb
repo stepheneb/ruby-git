@@ -64,4 +64,8 @@ class Test::Unit::TestCase
     end
   end
   
+  def rm_file(name)
+    FileUtils.rm(name)
+  end
+  
 end
