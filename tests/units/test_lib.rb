@@ -123,6 +123,18 @@ class TestLib < Test::Unit::TestCase
     assert(branches.select { |b| /master/.match(b[0]) }.size > 0)  # has a master branch
   end
 
+  def test_diff_files
+    in_temp_dir do |path|
+      g = Git.clone(@wdir_dot, 'diff_files_test')
+      l = g.lib
+      Dir.chdir('diff_files_test') do
+        assert(l.diff_files.length == 0)
+        FileUtils.touch('example.txt')
+        assert(l.diff_files.length == 0)
+      end
+    end
+  end
+
   def test_ignored_files
     in_temp_dir do |path|
       g = Git.clone(@wdir_dot, 'ignored_files_test')
