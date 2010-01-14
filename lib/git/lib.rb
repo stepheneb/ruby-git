@@ -271,6 +271,7 @@ module Git
 
     # compares the index and the working directory
     def diff_files
+      run_command('git update-index --refresh -q >/dev/null')
       hsh = {}
       command_lines('diff-files').each do |line|
         (info, file) = line.split("\t")
